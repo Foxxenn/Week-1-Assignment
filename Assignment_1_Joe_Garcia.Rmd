@@ -1,0 +1,76 @@
+---
+title: "607 Homework 1"
+author: "Joe Garcia"
+date: '2023-01-30'
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+## Importing the NFL Dataset, Checking variables.
+
+```{r}
+library(knitr)
+library(plyr)
+library(dplyr)
+#library(devtools)
+library(RCurl)
+
+#t1 <- read.csv(file = "nfl-elo/nfl_elo_latest.csv")
+#t2 <- read.csv(file = "nfl-elo/nfl_elo.csv")
+url <- getURL("https://raw.githubusercontent.com/Foxxenn/Week-1-Assignment/main/nfl-elo/nfl_elo.csv")
+t4 <-data.frame(read.csv(text= url))
+
+head(t4)
+
+```
+
+## Selecting from only 1990 to present and rows with Dak Prescott
+
+```{r}
+# dplyr syntax
+t4_sub <- t4 %>% filter(season>1990, qb1 == "Dak Prescott")
+head(t4_sub)
+
+
+# plyr syntax
+#t4_sub <- subset(t4, season > 1990 & qb1 == "Dak Prescott")
+#head(t4_sub)
+
+``` 
+## Select a  subset by row.
+
+```{r}
+qbs <- t4 %>% filter(season>1990)
+
+
+qb_1990 <- qbs[, c("season","qb1","total_rating")]
+head(qb_1990)
+
+qb_1990_wo_Nas <- qb_1990[complete.cases(qb_1990),]
+head(qb_1990_wo_Nas)
+
+```
+## Rename qb1 to QuaterBack headers.
+```{r}
+
+qb_1990_wo_Nas_Names <- qb_1990_wo_Nas %>% rename("QuaterBack" = "qb1")
+head(qb_1990_wo_Nas_Names)
+
+```
+
+## Filtering to get Tom Brady
+
+```{r}
+tom_brady <-qb_1990_wo_Nas_Names  %>% filter( QuaterBack == "Tom Brady")
+
+```
+### Bar Plots
+## Tom Brady's total ratings for 2021 annd 2022 (he only has data for these years)
+
+```{r}
+barplot(table(tom_brady$total_rating), main = "Tom Brady")
+
+```
+
